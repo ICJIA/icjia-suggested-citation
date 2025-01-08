@@ -1,6 +1,6 @@
-Citation Generator
+# Citation Generator
 
-This simple app generates citations in APA, Chicago, and MLA styles. You can run it by opening the `index.html` file locally or hosting the file on a web server.
+This simple app generates citations in APA, Chicago, and MLA styles. You can run it by opening the `index.html` file locally or hosting the file on a web server. Dependencies are served via CDN so no additional build is required.
 
 ## Site
 
