@@ -25,8 +25,16 @@
     <div id="root"></div>
 
     <script type="text/babel">
-      // Simple SVG Icons
+      /**
+       * Icons Component
+       * Contains SVG icons used in the application.
+       */
       const Icons = {
+        /**
+         * Copy Icon
+         * @param {Object} props - SVG properties
+         * @returns {JSX.Element} SVG element for copy icon
+         */
         Copy: (props) => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -44,6 +52,11 @@
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
         ),
+        /**
+         * Check Icon
+         * @param {Object} props - SVG properties
+         * @returns {JSX.Element} SVG element for check icon
+         */
         Check: (props) => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -60,6 +73,11 @@
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
         ),
+        /**
+         * Sun Icon
+         * @param {Object} props - SVG properties
+         * @returns {JSX.Element} SVG element for sun icon
+         */
         Sun: (props) => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -84,6 +102,11 @@
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
           </svg>
         ),
+        /**
+         * Moon Icon
+         * @param {Object} props - SVG properties
+         * @returns {JSX.Element} SVG element for moon icon
+         */
         Moon: (props) => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -100,6 +123,11 @@
             <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
           </svg>
         ),
+        /**
+         * AlertCircle Icon
+         * @param {Object} props - SVG properties
+         * @returns {JSX.Element} SVG element for alert circle icon
+         */
         AlertCircle: (props) => (
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -120,10 +148,17 @@
         ),
       };
 
-      // Remove the Lucide imports and use Icons directly
+      /**
+       * Destructure Icons for easy access to individual icons.
+       */
       const { Copy, Check, Sun, Moon, AlertCircle } = Icons;
 
-      // Shadcn-inspired components
+      /**
+       * Card Component
+       * Shadcn-inspired card component for layout.
+       * @param {Object} props - Component properties
+       * @returns {JSX.Element} Card element
+       */
       const Card = ({ className, children }) => (
         <div
           className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}
@@ -132,10 +167,22 @@
         </div>
       );
 
+      /**
+       * CardHeader Component
+       * Header section of the Card.
+       * @param {Object} props - Component properties
+       * @returns {JSX.Element} Card header element
+       */
       const CardHeader = ({ children }) => (
         <div className="flex flex-col space-y-1.5 p-6">{children}</div>
       );
 
+      /**
+       * CardTitle Component
+       * Title section of the Card.
+       * @param {Object} props - Component properties
+       * @returns {JSX.Element} Card title element
+       */
       const CardTitle = ({ className, children }) => (
         <h3
           className={`text-2xl font-semibold leading-none tracking-tight ${className}`}
@@ -144,10 +191,22 @@
         </h3>
       );
 
+      /**
+       * CardContent Component
+       * Content section of the Card.
+       * @param {Object} props - Component properties
+       * @returns {JSX.Element} Card content element
+       */
       const CardContent = ({ className, children }) => (
         <div className={`p-6 pt-0 ${className}`}>{children}</div>
       );
 
+      /**
+       * Input Component
+       * Custom input field with styling.
+       * @param {Object} props - Component properties
+       * @returns {JSX.Element} Input element
+       */
       const Input = ({ className, ...props }) => (
         <input
           className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
@@ -155,6 +214,12 @@
         />
       );
 
+      /**
+       * Button Component
+       * Custom button with styling.
+       * @param {Object} props - Component properties
+       * @returns {JSX.Element} Button element
+       */
       const Button = ({ className, children, ...props }) => (
         <button
           className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow-lg ${className}`}
@@ -164,8 +229,13 @@
         </button>
       );
 
-      // Main Citation Generator Component
+      /**
+       * CitationGenerator Component
+       * Main component for generating citations based on user input.
+       * @returns {JSX.Element} Citation generator UI
+       */
       const CitationGenerator = () => {
+        // State variables for user inputs and citations
         const [url, setUrl] = React.useState("");
         const [firstName, setFirstName] = React.useState("");
         const [lastName, setLastName] = React.useState("");
@@ -180,7 +250,9 @@
         const [toastType, setToastType] = React.useState("success");
         const [isDarkMode, setIsDarkMode] = React.useState(true);
 
-        // On mount, load theme from local storage
+        /**
+         * Effect hook to load theme from local storage on component mount.
+         */
         React.useEffect(() => {
           const storedTheme = localStorage.getItem("theme");
           if (storedTheme) {
@@ -188,7 +260,9 @@
           }
         }, []);
 
-        // Update local storage when toggling theme
+        /**
+         * Toggle the theme between dark and light modes.
+         */
         const toggleTheme = () => {
           setIsDarkMode((prev) => {
             const newMode = !prev;
@@ -197,6 +271,11 @@
           });
         };
 
+        /**
+         * Display a toast notification.
+         * @param {string} message - The message to display
+         * @param {string} type - Type of notification ('success' or 'error')
+         */
         const showNotification = (message, type = "success") => {
           setToastMessage(message);
           setToastType(type);
@@ -204,6 +283,10 @@
           setTimeout(() => setShowToast(false), 1500);
         };
 
+        /**
+         * Copy text to clipboard.
+         * @param {string} text - Text to copy
+         */
         const copyToClipboard = (text) => {
           const textarea = document.createElement("textarea");
           textarea.value = text;
@@ -214,6 +297,10 @@
           showNotification("Citation copied to clipboard!");
         };
 
+        /**
+         * Validate user input fields.
+         * @returns {string|null} Error message if validation fails, otherwise null
+         */
         const validateFields = () => {
           if (!firstName.trim()) return "Please enter first name";
           if (!lastName.trim()) return "Please enter last name";
@@ -222,6 +309,9 @@
           return null;
         };
 
+        /**
+         * Generate citations in APA, Chicago, and MLA formats.
+         */
         const generateCitations = () => {
           const validationError = validateFields();
           if (validationError) {
@@ -243,6 +333,7 @@
           const year = currentDate.getFullYear();
 
           let finalUrl = url.trim();
+          // Ensure the URL starts with http:// or https://
           if (!/^https?:\/\//i.test(finalUrl)) {
             finalUrl = "https://" + finalUrl;
           }
@@ -275,6 +366,9 @@
           }
         };
 
+        /**
+         * Reset all input fields and citations.
+         */
         const resetFields = () => {
           setUrl("");
           setFirstName("");
@@ -287,12 +381,24 @@
           showNotification("Reset successful!", "success");
         };
 
+        /**
+         * Handle Enter key press to generate citations.
+         * @param {Object} e - Event object
+         */
         const handleKeyPress = (e) => {
           if (e.key === "Enter") {
             generateCitations();
           }
         };
 
+        /**
+         * CitationBlock Component
+         * Displays a citation with a copy button.
+         * @param {Object} props - Component properties
+         * @param {string} props.format - Citation format (APA, Chicago, MLA)
+         * @param {string} props.citation - The citation text
+         * @returns {JSX.Element} Citation block element
+         */
         const CitationBlock = ({ format, citation }) => (
           <div className="mt-4">
             <div className="flex justify-between items-center mb-2">
@@ -476,7 +582,9 @@
         );
       };
 
-      // Render the app
+      /**
+       * Render the CitationGenerator component into the DOM.
+       */
       const root = ReactDOM.createRoot(document.getElementById("root"));
       root.render(<CitationGenerator />);
     </script>
