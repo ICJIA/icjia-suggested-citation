@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Citation Generator</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- React -->
+    <script
+      crossorigin
+      src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"
+    ></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      // Simple SVG Icons
+      const Icons = {
+        Copy: (props) => (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            {...props}
+          >
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        ),
+        Check: (props) => (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            {...props}
+          >
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        ),
+        Sun: (props) => (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            {...props}
+          >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        ),
+        Moon: (props) => (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            {...props}
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        ),
+        AlertCircle: (props) => (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            {...props}
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        ),
+      };
+
+      // Remove the Lucide imports and use Icons directly
+      const { Copy, Check, Sun, Moon, AlertCircle } = Icons;
+
+      // Shadcn-inspired components
+      const Card = ({ className, children }) => (
+        <div
+          className={`rounded-lg border bg-card text-card-foreground shadow-sm ${className}`}
+        >
+          {children}
+        </div>
+      );
+
+      const CardHeader = ({ children }) => (
+        <div className="flex flex-col space-y-1.5 p-6">{children}</div>
+      );
+
+      const CardTitle = ({ className, children }) => (
+        <h3
+          className={`text-2xl font-semibold leading-none tracking-tight ${className}`}
+        >
+          {children}
+        </h3>
+      );
+
+      const CardContent = ({ className, children }) => (
+        <div className={`p-6 pt-0 ${className}`}>{children}</div>
+      );
+
+      const Input = ({ className, ...props }) => (
+        <input
+          className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+          {...props}
+        />
+      );
+
+      const Button = ({ className, children, ...props }) => (
+        <button
+          className={`inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 shadow-lg ${className}`}
+          {...props}
+        >
+          {children}
+        </button>
+      );
+
+      // Main Citation Generator Component
+      const CitationGenerator = () => {
+        const [url, setUrl] = React.useState("");
+        const [firstName, setFirstName] = React.useState("");
+        const [lastName, setLastName] = React.useState("");
+        const [title, setTitle] = React.useState("");
+        const [citations, setCitations] = React.useState({
+          apa: "",
+          chicago: "",
+          mla: "",
+        });
+        const [showToast, setShowToast] = React.useState(false);
+        const [toastMessage, setToastMessage] = React.useState("");
+        const [toastType, setToastType] = React.useState("success");
+        const [isDarkMode, setIsDarkMode] = React.useState(true);
+
+        // On mount, load theme from local storage
+        React.useEffect(() => {
+          const storedTheme = localStorage.getItem("theme");
+          if (storedTheme) {
+            setIsDarkMode(storedTheme === "dark");
+          }
+        }, []);
+
+        // Update local storage when toggling theme
+        const toggleTheme = () => {
+          setIsDarkMode((prev) => {
+            const newMode = !prev;
+            localStorage.setItem("theme", newMode ? "dark" : "light");
+            return newMode;
+          });
+        };
+
+        const showNotification = (message, type = "success") => {
+          setToastMessage(message);
+          setToastType(type);
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 1500);
+        };
+
+        const copyToClipboard = (text) => {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+          showNotification("Citation copied to clipboard!");
+        };
+
+        const validateFields = () => {
+          if (!firstName.trim()) return "Please enter first name";
+          if (!lastName.trim()) return "Please enter last name";
+          if (!title.trim()) return "Please enter title";
+          if (!url.trim()) return "Please enter URL";
+          return null;
+        };
+
+        const generateCitations = () => {
+          const validationError = validateFields();
+          if (validationError) {
+            showNotification(validationError, "error");
+            return;
+          }
+
+          const currentDate = new Date();
+          const formattedRetrievalDate = currentDate.toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            }
+          );
+
+          const month = currentDate.toLocaleString("en-US", { month: "long" });
+          const year = currentDate.getFullYear();
+
+          let finalUrl = url.trim();
+          if (!/^https?:\/\//i.test(finalUrl)) {
+            finalUrl = "https://" + finalUrl;
+          }
+
+          try {
+            const domain = new URL(finalUrl).hostname;
+            const siteName = domain
+              .replace("www.", "")
+              .split(".")
+              .slice(0, -1)
+              .join(" ")
+              .split(" ")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+
+            const firstInitial = firstName.charAt(0);
+
+            // APA Format with italicized title
+            const apa = `${lastName}, ${firstInitial}. (${year}, ${month} ${currentDate.getDate()}). _${title}_. ${siteName}. Retrieved ${formattedRetrievalDate}, from ${finalUrl}`;
+
+            // Chicago Format
+            const chicago = `${lastName}, ${firstName}. "${title}." ${siteName}. Last modified ${month} ${currentDate.getDate()}, ${year}. ${finalUrl}.`;
+
+            // MLA Format
+            const mla = `${lastName}, ${firstName}. "${title}." ${siteName}, ${currentDate.getDate()} ${month} ${year}, ${finalUrl}. Accessed ${formattedRetrievalDate}.`;
+
+            setCitations({ apa, chicago, mla });
+          } catch (err) {
+            showNotification("Please enter a valid URL", "error");
+          }
+        };
+
+        const resetFields = () => {
+          setUrl("");
+          setFirstName("");
+          setLastName("");
+          setTitle("");
+          setCitations({ apa: "", chicago: "", mla: "" });
+          setShowToast(false);
+          setToastMessage("");
+          setToastType("success");
+          showNotification("Reset successful!", "success");
+        };
+
+        const handleKeyPress = (e) => {
+          if (e.key === "Enter") {
+            generateCitations();
+          }
+        };
+
+        const CitationBlock = ({ format, citation }) => (
+          <div className="mt-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3
+                className={`text-lg font-semibold ${
+                  isDarkMode ? "text-gray-100" : ""
+                }`}
+              >
+                {format} Citation:
+              </h3>
+              <Button
+                variant="ghost"
+                onClick={() => copyToClipboard(citation)}
+                className={`hover:bg-gray-100 ${
+                  isDarkMode ? "text-gray-100 hover:bg-gray-700" : ""
+                }`}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            </div>
+            <p
+              className={`p-4 rounded-md font-serif ${
+                isDarkMode ? "bg-gray-700 text-gray-100" : "bg-gray-100"
+              }`}
+            >
+              {citation
+                .split("_")
+                .map((text, index) =>
+                  index % 2 === 1 ? <i key={index}>{text}</i> : text
+                )}
+            </p>
+          </div>
+        );
+
+        return (
+          <div
+            className={`relative min-h-screen pt-6 ${
+              isDarkMode ? "bg-gray-900" : "bg-white"
+            }`}
+          >
+            {/* Theme Toggle */}
+            <div className="absolute top-4 right-4 group inline-block">
+              <Button
+                onClick={toggleTheme}
+                className={`${isDarkMode ? "text-white" : "text-black"}`}
+              >
+                {isDarkMode ? (
+                  <Sun className="h-5 w-5" />
+                ) : (
+                  <Moon className="h-5 w-5" />
+                )}
+              </Button>
+              <div className="hidden group-hover:block absolute right-full top-1/2 -translate-y-1/2 mr-2 px-2 py-1 text-sm rounded bg-gray-700 text-white whitespace-nowrap">
+                Light/Dark Mode Switch
+              </div>
+            </div>
+
+            {/* Toast Notification */}
+            {showToast && (
+              <div
+                className={`fixed top-4 right-4 flex items-center px-4 py-2 rounded-md shadow-lg transition-opacity duration-300 ${
+                  toastType === "success"
+                    ? "bg-green-600 text-white"
+                    : "bg-red-600 text-white"
+                }`}
+              >
+                {toastType === "success" ? (
+                  <Check className="h-4 w-4 mr-2" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 mr-2" />
+                )}
+                <span>{toastMessage}</span>
+              </div>
+            )}
+
+            <Card
+              className={`w-full max-w-2xl mx-auto ${
+                isDarkMode ? "bg-gray-800 text-gray-100 border-gray-600" : ""
+              }`}
+            >
+              <CardHeader>
+                <CardTitle className={isDarkMode ? "text-gray-100" : ""}>
+                  URL Citation Generator
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex space-x-2">
+                  <Input
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className={`${
+                      isDarkMode
+                        ? "bg-gray-700 text-gray-100 border-gray-600"
+                        : "bg-white"
+                    }`}
+                  />
+                  <Input
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    className={`${
+                      isDarkMode
+                        ? "bg-gray-700 text-gray-100 border-gray-600"
+                        : "bg-white"
+                    }`}
+                  />
+                </div>
+
+                <Input
+                  placeholder="Title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className={`${
+                    isDarkMode
+                      ? "bg-gray-700 text-gray-100 border-gray-600"
+                      : "bg-white"
+                  }`}
+                />
+
+                <Input
+                  placeholder="Enter URL"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className={`${
+                    isDarkMode
+                      ? "bg-gray-700 text-gray-100 border-gray-600"
+                      : "bg-white"
+                  }`}
+                />
+
+                <div className="flex justify-center mt-6 space-x-2">
+                  <Button
+                    onClick={generateCitations}
+                    className={`px-8 ${
+                      isDarkMode ? "bg-blue-600 hover:bg-blue-700" : ""
+                    }`}
+                  >
+                    Generate
+                  </Button>
+                  <Button
+                    onClick={resetFields}
+                    className={`px-8 ${
+                      isDarkMode
+                        ? "bg-red-600 hover:bg-red-700"
+                        : "bg-red-500 hover:bg-red-600"
+                    }`}
+                  >
+                    Reset
+                  </Button>
+                </div>
+
+                {citations.apa && (
+                  <div className="space-y-4 mt-8">
+                    <CitationBlock format="APA" citation={citations.apa} />
+                    <CitationBlock
+                      format="Chicago"
+                      citation={citations.chicago}
+                    />
+                    <CitationBlock format="MLA" citation={citations.mla} />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        );
+      };
+
+      // Render the app
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<CitationGenerator />);
+    </script>
+  </body>
+</html>
