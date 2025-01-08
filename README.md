@@ -17,13 +17,19 @@ https://citation-gen.netlify.app/
 
 Smith, J. (2023, October 1). _My Article_. ExampleSite. Retrieved October 2, 2023, from https://example.com
 
+[More information on APA style](https://apastyle.apa.org/)
+
 ### Chicago Example
 
 Smith, John. "My Article." ExampleSite. Last modified October 1, 2023. https://example.com.
 
+[More information on Chicago style](https://www.chicagomanualofstyle.org/home.html)
+
 ### MLA Example
 
 Smith, John. "My Article." ExampleSite, 1 October 2023, https://example.com. Accessed 2 October 2023.
+
+[More information on MLA style](https://style.mla.org/)
 
 ## License
 
