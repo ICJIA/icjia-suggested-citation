@@ -1,6 +1,10 @@
-# Citation Generator
+Citation Generator
 
 This simple app generates citations in APA, Chicago, and MLA styles. You can run it by opening the `index.html` file locally or hosting the file on a web server.
+
+## Site
+
+https://citation-gen.netlify.app/
 
 ## How to Run
 
